@@ -43,6 +43,7 @@ let
   pythonWithGobject = python3Packages.python.withPackages (p: with p; [
     pygobject3
   ]);
+  machines = (import ./machines)  { inherit pkgs nixpkgs; };
 in
 
 stdenv.mkDerivation rec {
