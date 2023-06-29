@@ -17,6 +17,7 @@
 , glibc
 , glib-networking
 , gnused
+, gnumake
 , gnutls
 , json-glib
 , krb5
@@ -37,24 +38,25 @@
 , systemd
 , udev
 , xmlto
+, pkgs
+, cockpit-machines
 }:
 
 let
   pythonWithGobject = python3Packages.python.withPackages (p: with p; [
     pygobject3
   ]);
-  machines = (import ./machines)  { inherit pkgs nixpkgs; };
 in
 
 stdenv.mkDerivation rec {
   pname = "cockpit";
-  version = "287";
+  version = "292";
 
   src = fetchFromGitHub {
     owner = "cockpit-project";
     repo = "cockpit";
-    rev = "refs/tags/${version}";
-    sha256 = "sha256-tIZOI3jiMRaGHMXS1mA1Tom9ij3L/VuxDUJdnEc7SSc=";
+    rev = "355c0aa59e3991243e10a61183e62ea129d3261a";
+    sha256 = "sha256-Lx4Gh7NlkEXHdiaNCKVZ/kUwX0DzZHHTH2Xz8KxxFQo=";
     fetchSubmodules = true;
   };
 
@@ -76,6 +78,7 @@ stdenv.mkDerivation rec {
     systemd
     ripgrep
     xmlto
+    gnumake
   ];
 
   buildInputs = [
@@ -87,6 +90,7 @@ stdenv.mkDerivation rec {
     libssh
     polkit
     udev
+    pkgs.rsync
   ];
 
   postPatch = ''
@@ -117,7 +121,8 @@ stdenv.mkDerivation rec {
       tools/make-compile-commands \
       tools/node-modules \
       tools/termschutz \
-      tools/webpack-make.js
+      tools/webpack-make.js \
+      build.js
 
     for f in node_modules/.bin/*; do
       patchShebangs $(realpath $f)
@@ -127,7 +132,7 @@ stdenv.mkDerivation rec {
 
     cp node_modules/.package-lock.json package-lock.json
 
-    substituteInPlace src/systemd_ctypes/libsystemd.py \
+    substituteInPlace modules/systemd_ctypes/src/systemd_ctypes/libsystemd.py \
       --replace libsystemd.so.0 ${systemd}/lib/libsystemd.so.0
 
     for f in pkg/**/*.js pkg/**/*.jsx test/**/* src/**/*; do
@@ -190,6 +195,13 @@ stdenv.mkDerivation rec {
       --replace /usr $out
 
     runHook postFixup
+  '';
+
+  postInstall = ''
+    mkdir $out/share/cockpit/machines
+
+    cp ${cockpit-machines}/org.cockpit-project.machines.metainfo.xml $out/share/metainfo/
+    cp ${cockpit-machines}/* $out/share/cockpit/machines/
   '';
 
   doCheck = true;

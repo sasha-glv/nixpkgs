@@ -189,15 +189,15 @@ in {
         ];
         ExecStart = "${cfg.package}/libexec/cockpit-tls";
         User = "root";
-        Group = "";
-        NoNewPrivileges = true;
-        ProtectSystem = "strict";
-        ProtectHome = true;
-        PrivateTmp = true;
-        PrivateDevices = true;
-        ProtectKernelTunables = true;
-        RestrictAddressFamilies = [ "AF_UNIX" "AF_INET" "AF_INET6" ];
-        MemoryDenyWriteExecute = true;
+        #Group = "";
+        #NoNewPrivileges = true;
+        #ProtectSystem = "strict";
+        #ProtectHome = true;
+        #PrivateTmp = true;
+        #PrivateDevices = true;
+        #ProtectKernelTunables = true;
+        #RestrictAddressFamilies = [ "AF_UNIX" "AF_INET" "AF_INET6" ];
+        #MemoryDenyWriteExecute = true;
       };
     };
 

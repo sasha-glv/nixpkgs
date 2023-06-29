@@ -25527,6 +25527,8 @@ with pkgs;
 
   cockpit = callPackage ../servers/monitoring/cockpit { };
 
+  cockpit-machines = callPackage ../servers/monitoring/cockpit/machines/default.nix {};
+
   codeowners = callPackage ../development/tools/codeowners { };
 
   couchdb3 = callPackage ../servers/http/couchdb/3.nix { };
